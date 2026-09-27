@@ -2,8 +2,8 @@ name: Naver Real Estate Alert
 
 on:
   schedule:
-    - cron: '*/30 * * * *' # 30분마다 실행
-  workflow_dispatch:
+    - cron: '*/30 * * * *' # 30분마다 자동 실행
+  workflow_dispatch: # 수동 실행 버튼
 
 jobs:
   check:
@@ -30,11 +30,8 @@ jobs:
         run: |
           python main.py
 
-      - name: Commit and push updated seen list
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add seen_articles.json || true
-          git commit -m "Update seen listings [skip ci]" || echo "No changes to commit"
-          git pull --rebase origin main || true
-          git push
+      - name: Commit & Push updated seen list
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update seen listings [skip ci]"
+          file_pattern: "seen_articles.json"
